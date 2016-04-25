@@ -160,4 +160,6 @@ function main()
 	return reshape(C2, Int(M), Int(N))
 end
 
-main()
+if (!isempty(libclblas) && !isempty(libopencl))
+	main()
+end
