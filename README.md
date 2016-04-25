@@ -4,7 +4,7 @@ OpenCL BLAS library wrapper for Julia with samples
 
 #####This project is based off the work of these projects:
 
-[OpenCL.jl](https://github.com/JuliaGPU/OpenCL.jl) Jake Bolewski and Valentin Churavy  
+[OpenCL.jl](https://github.com/JuliaGPU/OpenCL.jl) by Jake Bolewski and Valentin Churavy  
 [CUBLAS.jl](https://github.com/JuliaGPU/CUBLAS.jl) by Nick Henderson
 
 ##What is this project?
