@@ -9,9 +9,9 @@
 
 ##What is this project?
 
-This project focuses on running OpenCL BLAS on GPU devices specifically, all OpenCL type definitions and functions were hand typed from cl.h and clBLAS.h header.
-Currently, I've only rewrote the example C program (single precision GEMM BLAS) provided with libclBLAS into test_sgemm.jl.
-I also made a separate high level function to manages all the memory involved with calling the C function clblasSgemm().
+This project focuses on running OpenCL BLAS on GPU devices specifically, all OpenCL type definitions and functions were hand typed from cl.h and clBLAS.h header.  
+Currently, I've only rewritten the example C program (single precision GEMM BLAS) provided with libclBLAS into test_sgemm.jl. 
+I also made a separate high level function to manages all the memory involved with calling the C function clblasSgemm().  
 As a result, the OpenCLBLAS.sgemm() function cleans up the buffers, events, contexts, and queues in the GPU memory.
 
 ##Progress
