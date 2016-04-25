@@ -1,6 +1,7 @@
 # OpenCLBLAS.jl
-#################OpenCL BLAS library wrapper for Julia with samples
 ============================
+
+######OpenCL BLAS library wrapper for Julia with samples
 
 #####This project is based off the work of these projects:
 
