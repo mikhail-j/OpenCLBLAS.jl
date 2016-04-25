@@ -137,7 +137,6 @@ function sgemm!(tA::Char,tB::Char, alpha::cl_float, A::Array{cl_float,2}, B::Arr
 	ctx = C_NULL
 	devs[1] = C_NULL
 	Base.gc()
-	return reshape(C1, Int(M), Int(N))
 end
 
 end
