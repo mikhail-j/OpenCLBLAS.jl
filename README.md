@@ -17,7 +17,7 @@ As a result, I also made a separate high level function to manages all the memor
 
 I'll add more OpenCLBLAS functions as I test them myself.
 
-The following functions have been tested on a Windows x64 PC with an NVIDIA GPU:
+The following functions have been tested on a Windows x64 PC with an NVIDIA GPU:  
 -**sGEMM**
 
 ##License
