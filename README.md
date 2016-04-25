@@ -4,13 +4,13 @@ OpenCL BLAS library wrapper for Julia with samples
 
 #####This project is based off the work of these projects:
 
-[OpenCL.jl](https://github.com/JuliaGPU/OpenCL.jl)  
-[CUBLAS.jl](https://github.com/JuliaGPU/CUBLAS.jl)
+[OpenCL.jl](https://github.com/JuliaGPU/OpenCL.jl) Jake Bolewski and Valentin Churavy  
+[CUBLAS.jl](https://github.com/JuliaGPU/CUBLAS.jl) by Nick Henderson
 
 ##What is this project?
 ----------------------------
 
-This project focuses on running OpenCL BLAS on GPU devices specifically.
+This project focuses on running OpenCL BLAS on GPU devices specifically, all OpenCL type definitions and functions were hand typed from cl.h and clBLAS.h header.
 Currently, I've only rewrote the example C program (single precision GEMM BLAS) provided with libclBLAS into test_sgemm.jl.
 As a result, I also made a separate high level function to manages all the memory involved with calling clblasSgemm(), this include removing all traces of the buffers in the GPU memory.
 
