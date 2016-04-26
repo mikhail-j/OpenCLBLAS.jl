@@ -21,8 +21,16 @@
 
 typealias cl_bitfield Culong
 typealias cl_float Cfloat
+typealias cl_double Cdouble
+typealias cl_char Cchar
+typealias cl_uchar Cuchar
+typealias cl_short Cshort
+typealias cl_ushort Cushort
 typealias cl_int Cint
 typealias cl_uint Cuint
+typealias cl_long Clonglong#64 bit long
+typealias cl_ulong Culonglong
+typealias cl_half Float16#cl_platform.h defines this as a unsigned short
 typealias cl_device_id Ptr{Void}
 typealias cl_platform_id Ptr{Void}
 typealias cl_context Ptr{Void}
@@ -44,8 +52,6 @@ const CL_MEM_REFERENCE_COUNT       = cl_mem_info(0x1105)
 const CL_MEM_CONTEXT               = cl_mem_info(0x1106)
 const CL_MEM_ASSOCIATED_MEMOBJECT  = cl_mem_info(0x1107)
 const CL_MEM_OFFSET                = cl_mem_info(0x1108)
-typealias cl_char Cchar
-typealias cl_uchar Cuchar
 typealias cl_event Ptr{Void}
 typealias cl_event_info cl_uint
 const CL_EVENT_COMMAND_QUEUE            = cl_event_info(0x11D0)
