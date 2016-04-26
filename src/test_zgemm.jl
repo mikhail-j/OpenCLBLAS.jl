@@ -1,5 +1,5 @@
 #=**
-* Ported from OpenCLBLAS dGEMM example (example_sgemm.c)
+* Ported from OpenCLBLAS zGEMM example (example_sgemm.c)
 * Qijia (Michael) Jin
 * @version 0.0.1
 *
@@ -29,21 +29,23 @@ include("cl_functions.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
 
-function clblasDgemm(o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,ncq,cq,ne,wle,e)
-	return ccall((:clblasDgemm, libclblas), cl_int, (clblasOrder,
+function clblasZgemm(o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,ncq,cq,ne,wle,e)
+	return ccall((:clblasZgemm, libclblas), cl_int, (clblasOrder,
 		clblasTranspose,
 		clblasTranspose,
 		Csize_t,
 		Csize_t,
 		Csize_t,
-		cl_double,
+		Ref{clblasDoubleComplex},#treating this as a pointer fixed a segmentation fault
+		#clblasDoubleComplex,
 		cl_mem,
 		Csize_t,
 		Csize_t,
 		cl_mem,
 		Csize_t,
 		Csize_t,
-		cl_double,
+		Ref{clblasDoubleComplex},#treating this as a pointer fixed a segmentation fault
+		#clblasDoubleComplex,
 		#Base.cconvert(Ptr{Void}, Ref{cl_mem}),
 		#Ref{cl_mem},
 		cl_mem,
@@ -53,7 +55,7 @@ function clblasDgemm(o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,n
 		Ref{cl_command_queue},
 		cl_uint,
 		Ref{cl_event},
-		Ref{cl_event}),
+		Ptr{cl_event}),
 		#Ptr{cl_event_info},
 		#Ptr{cl_event_info}),
 		o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,ncq,cq,ne,wle,e)
@@ -76,9 +78,12 @@ function main()
 	queue[1] = clCreateCommandQueue(ctx, devs[1], cl_command_queue_properties(0), err)
 	statusCheck(err[1])
 	################################	create arrays
-	A =	convert(Array{cl_double,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31, 32, 33, 34, 35]';[41, 42, 43, 44, 45]'])
-	B = convert(Array{cl_double,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]'])
-	C = convert(Array{cl_double,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]'])
+	A =	convert(Array{clblasDoubleComplex,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31, 32, 33, 34, 35]';[41, 42, 43, 44, 45]'])
+	B = convert(Array{clblasDoubleComplex,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]'])
+	C = convert(Array{clblasDoubleComplex,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]'])
+	##A =	convert(Array{cl_double2,2}, convert(Array{clblasDoubleComplex,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31, 32, 33, 34, 35]';[41, 42, 43, 44, 45]']))
+	##B = convert(Array{cl_double2,2}, convert(Array{clblasDoubleComplex,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]']))
+	##C = convert(Array{cl_double2,2}, convert(Array{clblasDoubleComplex,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]']))
 	A1 = vec(A)
 	B1 = vec(B)
 	C1 = vec(C)
@@ -87,9 +92,11 @@ function main()
 	N = Csize_t(length(B[1,:]))
 	
 	order = clblasColumnMajor		##julia uses column major
-	alpha = convert(cl_double, 10)
+	alpha = Array(clblasDoubleComplex, 1)
+	alpha[1] = convert(clblasDoubleComplex, 10)
 	#println(string("alpha: ",alpha))
-	beta = convert(cl_double, 20)
+	beta = Array(clblasDoubleComplex, 1)
+	beta[1] = convert(clblasDoubleComplex, 20)
 	#println(string("beta: ",beta))
 	transA = clblasNoTrans;
 	transB = clblasNoTrans;
@@ -101,29 +108,29 @@ function main()
 	statusCheck(clblasSetup())
 	statusCheck(clFlush(queue[1]))
 	err = Array(cl_int, 1)
-	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * K * sizeof(cl_double), C_NULL, err)
+	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * K * sizeof(clblasDoubleComplex), C_NULL, err)
 	statusCheck(err[1])
 	err = Array(cl_int, 1)
-	bufB = clCreateBuffer(ctx, CL_MEM_READ_ONLY, K * N * sizeof(cl_double), C_NULL, err)
+	bufB = clCreateBuffer(ctx, CL_MEM_READ_ONLY, K * N * sizeof(clblasDoubleComplex), C_NULL, err)
 	statusCheck(err[1])
 	err = Array(cl_int, 1)
-	bufC = clCreateBuffer(ctx, CL_MEM_READ_WRITE, M * N * sizeof(cl_double), C_NULL, err)
+	bufC = clCreateBuffer(ctx, CL_MEM_READ_WRITE, M * N * sizeof(clblasDoubleComplex), C_NULL, err)
 	statusCheck(err[1])
 	statusCheck(clFlush(queue[1]))
 	
 	event = Array(cl_event, 1)
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * K * sizeof(cl_double), A1, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * K * sizeof(clblasDoubleComplex), A1, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), K * N * sizeof(cl_double), B1, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), K * N * sizeof(clblasDoubleComplex), B1, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufC, CL_TRUE, Csize_t(0), M * N * sizeof(cl_double), C1, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufC, CL_TRUE, Csize_t(0), M * N * sizeof(clblasDoubleComplex), C1, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
@@ -150,19 +157,19 @@ function main()
 	                         bufC, 0, N,
 	                         1, queue, 0, C_NULL, event))
 =#
-	statusCheck(clblasDgemm(clblasColumnMajor, clblasNoTrans, clblasNoTrans, M, N, K,
+	statusCheck(clblasZgemm(clblasColumnMajor, clblasNoTrans, clblasNoTrans, M, N, K,
 	                         alpha, bufA, 0, M,
 	                         bufB, 0, K, beta,
 	                         bufC, 0, M,
 	                         1, queue, 0, C_NULL, event))
+
 	statusCheck(clFlush(queue[1]))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
-
-	C2=Array(cl_double,length(C1))
+	C2=Array(clblasDoubleComplex,length(C1))
 	event[1] = C_NULL
-	statusCheck(clEnqueueReadBuffer(queue[1], bufC, CL_TRUE, Csize_t(0), length(C1)*sizeof(cl_double), C2, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueReadBuffer(queue[1], bufC, CL_TRUE, Csize_t(0), length(C1)*sizeof(clblasDoubleComplex), C2, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 

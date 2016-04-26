@@ -24,6 +24,7 @@ if (isempty(libclblas))
 	print("clBLAS can't be found!")
 end
 include("cl_typedef.jl")
+include("clblas_typedef.jl")
 include("cl_functions.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
