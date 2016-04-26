@@ -14,7 +14,7 @@ As a result, the OpenCLBLAS.sgemm() function cleans up the buffers, events, cont
 
 ##Usage
 
-The following example modifies the C variable (matrix).  
+The following example shows how a user can use the GEMM function to modify a matrix C.  
 
 ```Julia
 include("cl_typedef.jl")
@@ -24,6 +24,19 @@ A = convert(Array{cl_float,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31,
 B = convert(Array{cl_float,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]'])
 C = convert(Array{cl_float,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]'])
 OpenCLBLAS.sgemm!('N','N',cl_float(10),A,B, cl_float(20), C)
+```
+  
+The result can be seen in this query:  
+  
+```Julia
+julia> C
+4x3 Array{Float32, 2}:
+ 21370.0  22040.0  22710.0
+ 37070.0  38240.0  39410.0
+ 52770.0  54440.0  56110.0
+ 68470.0  70640.0  72810.0
+
+julia>
 ```
 
 ##Progress
