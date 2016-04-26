@@ -17,11 +17,11 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *=#
 
-include("cl_typedef.jl")
+
 include("sgemm.jl")
 
-A = convert(Array{cl_float,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31, 32, 33, 34, 35]';[41, 42, 43, 44, 45]'])
-B = convert(Array{cl_float,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]'])
-C = convert(Array{cl_float,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]'])
-OpenCLBLAS.sgemm!('N','N',cl_float(10),A,B, cl_float(20), C)
+A = convert(Array{Float32,2}, [[11, 12, 13, 14, 15]';[21, 22, 23, 24, 25]';[31, 32, 33, 34, 35]';[41, 42, 43, 44, 45]'])
+B = convert(Array{Float32,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]';[51, 52, 53]'])
+C = convert(Array{Float32,2}, [[11, 12, 13]';[21, 22, 23]';[31, 32, 33]';[41, 42, 43]'])
+OpenCLBLAS.sgemm!('N','N',Float32(10),A,B, Float32(20), C)
 return C
