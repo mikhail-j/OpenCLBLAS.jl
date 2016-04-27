@@ -19,6 +19,7 @@
 *=#
 
 include("cl_typedef.jl")
+include("clblas_typedef.jl")
 
 function statusParse(clstatus)
 	if clstatus == 0#          

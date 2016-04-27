@@ -28,6 +28,7 @@ if (isempty(libclblas))
 end
 
 include("cl_typedef.jl")
+include("clblas_typedef.jl")
 include("cl_functions.jl")
 
 function sgemm(tA::Char,tB::Char, alpha::cl_float, A::Array{cl_float,2}, B::Array{cl_float,2})
