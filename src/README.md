@@ -1,4 +1,4 @@
-#BLAS function definitions  
+#BLAS Function Definitions  
   
 ASUM - Sum of absolute values  
 AXPY - Scale X and add to Y  
