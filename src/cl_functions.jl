@@ -228,9 +228,6 @@ end
 function unflatten(matrix, r, c)
 	return reshape(matrix, c, r)'
 end
-function clGetDeviceName(dev)
-
-end
 function clGetDeviceVendor(dev)
 	local len = Array(Csize_t, 1)
 	statusCheck(clGetDeviceInfo(dev, CL_DEVICE_VENDOR, 0, C_NULL, len))
