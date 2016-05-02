@@ -62,11 +62,10 @@ function main()
 	queue[1] = clCreateCommandQueue(ctx, devs[1], cl_command_queue_properties(0), err)
 	statusCheck(err[1])
 	################################	create arrays
-	X = convert(Array{clblasFloatComplex,1}, [1,2,-11,17,5,6,81]);
+	X = vec([clblasFloatComplex(1),clblasFloatComplex(2),clblasFloatComplex(-11),clblasFloatComplex(17),clblasFloatComplex(5),clblasFloatComplex(6),clblasFloatComplex(81)]');
 	N = Csize_t(length(X));
 	incX = cl_int(1);
-	local asum = Array(clblasFloatComplex, 1);
-	asum[1] = zero(clblasFloatComplex)
+	local asum = zeros(cl_float,1)
 	#Now initialize OpenCLBLAS and buffers
 	statusCheck(clblasSetup())
 	statusCheck(clFlush(queue[1]))
@@ -111,7 +110,7 @@ function main()
 
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueReadBuffer(queue[1], bufASUM, CL_TRUE, Csize_t(0), sizeof(clblasFloatComplex), asum, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueReadBuffer(queue[1], bufASUM, CL_TRUE, Csize_t(0), sizeof(cl_float), asum, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
