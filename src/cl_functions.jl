@@ -1,5 +1,5 @@
 #=**
-* OpenCL and OpenCL functions from "https://www.khronos.org/registry/cl/sdk/1.0/docs/"
+* OpenCL functions from "https://www.khronos.org/registry/cl/sdk/1.0/docs/"
 * Includes several higher level functions like clGetDeviceName() or clGetDeviceVendor()
 * Qijia (Michael) Jin
 * @version 0.0.1
@@ -19,7 +19,6 @@
 *=#
 
 include("cl_typedef.jl")
-include("clblas_typedef.jl")
 
 function statusParse(clstatus)
 	if clstatus == 0#          
@@ -93,49 +92,13 @@ function statusCheck(clstatus)
 		#println("SUCCESS")
 		return
 	else
-		warn("CLBLAS Error:")
+		warn("OpenCL Error:")
 		Base.show_backtrace(Base.STDOUT,backtrace())
 		println()
 		throw(statusParse(clstatus))
 	end
 end
 
-function clblasSetup()
-	return ccall((:clblasSetup, libclblas), clblasStatus, ())
-end
-function clblasTeardown()
-	ccall((:clblasTeardown, libclblas), Void, ())
-end
-
-function clblasSgemm(o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,ncq,cq,ne,wle,e)
-	return ccall((:clblasSgemm, libclblas), cl_int, (clblasOrder,
-		clblasTranspose,
-		clblasTranspose,
-		Csize_t,
-		Csize_t,
-		Csize_t,
-		cl_float,
-		cl_mem,
-		Csize_t,
-		Csize_t,
-		cl_mem,
-		Csize_t,
-		Csize_t,
-		cl_float,
-		#Base.cconvert(Ptr{Void}, Ref{cl_mem}),
-		#Ref{cl_mem},
-		cl_mem,
-		Csize_t,
-		Csize_t,
-		cl_uint,
-		Ref{cl_command_queue},
-		cl_uint,
-		Ref{cl_event},
-		Ref{cl_event}),
-		#Ptr{cl_event_info},
-		#Ptr{cl_event_info}),
-		o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,ncq,cq,ne,wle,e)
-end
 function clGetPlatformIDs(entries, p, np)
 	#return ccall((:clGetPlatformIDs, libopencl), cl_int, (cl_uint,Ptr{cl_platform_id},Ptr{cl_uint}),entries,p,np)
 	return ccall((:clGetPlatformIDs, libopencl), cl_int, (cl_uint,Ptr{cl_platform_id},Base.cconvert(Ptr{Void},Ref{cl_uint})),entries,p,np)
