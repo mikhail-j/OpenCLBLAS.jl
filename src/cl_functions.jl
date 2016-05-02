@@ -154,6 +154,7 @@ function clEnqueueWriteBuffer(q, b, isBlocking, off, cb, host_ptr, ne, wle, e)
 		Ptr{Void},
 		cl_uint,
 		Ptr{cl_event},#AMD's OpenCL driver prefers Ptr{cl_event} over Ref{cl_event}#Base.cconvert(Ptr{Void}, Ref{cl_event}),
+		#AMD's OpenCL driver (Windows 7 x64) throws invalid event wait list if argument type is Ref{cl_event}
 		Base.cconvert(Ptr{Void}, Ref{cl_event})),
 		q, b, isBlocking, off, cb, host_ptr, ne, wle, e)
 end
@@ -166,6 +167,7 @@ function clEnqueueReadBuffer(q, b, isBlocking, off, cb, host_ptr, ne, wle, e)
 		Ptr{Void},
 		cl_uint,
 		Ptr{cl_event},#AMD's OpenCL driver prefers Ptr{cl_event} over Ref{cl_event}#Base.cconvert(Ptr{Void}, Ref{cl_event}),
+		#AMD's OpenCL driver (Windows 7 x64) throws invalid event wait list if argument type is Ref{cl_event}
 		Base.cconvert(Ptr{Void}, Ref{cl_event})),
 		q, b, isBlocking, off, cb, host_ptr, ne, wle, e)
 end
