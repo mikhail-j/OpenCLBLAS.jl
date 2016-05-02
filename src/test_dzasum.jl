@@ -45,7 +45,7 @@ function clblasDzasum(N,as,offA,X,offX,incX,sb,ncq,cq,ne,wle,e)
 		N,as,offA,X,offX,incX,sb,ncq,cq,ne,wle,e)
 end
 
-function test_dzasum()
+function main()
 
 	local props = vec(convert(Array{cl_context_properties, 2}, [CL_CONTEXT_PLATFORM 0 0]))
 	devs = Array(cl_device_id, 1)
@@ -148,5 +148,5 @@ function test_dzasum()
 end
 
 if (!isempty(libclblas) && !isempty(libopencl))
-	test_dzasum()
+	main()
 end
