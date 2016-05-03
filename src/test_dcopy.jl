@@ -121,15 +121,6 @@ function main()
 	print("Y: ")
 	println(Y)
 
-#=
-	scratch = zeros(clblasDoubleComplex, N)
-	event[1] = C_NULL
-	statusCheck(clEnqueueReadBuffer(queue[1], sbuf, CL_TRUE, Csize_t(0), N * sizeof(clblasDoubleComplex), scratch, cl_uint(0), C_NULL, event))
-	statusCheck(clWaitForEvents(1,event))
-	statusCheck(clReleaseEvent(event[1]))		#free the memory
-	println(scratch)
-=#
-
 	statusCheck(clFlush(queue[1]))
 	statusCheck(clReleaseMemObject(bufY))
 	statusCheck(clFlush(queue[1]))
