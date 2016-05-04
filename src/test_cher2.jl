@@ -17,15 +17,16 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *=#
 
-const libclblas = Libdl.find_library(["clBLAS","libclBLAS"],["C:\\AMD\\acml6.1.0.33\\ifort64\\lib\\"])
+const libclblas = Libdl.find_library(["clBLAS","libclBLAS"],["C:\\AMD\\clBLA-2.10.0\\bin","C:\\AMD\\acml6.1.0.33\\ifort64\\lib\\"])
 #const libopencl = Libdl.find_library(["libOpenCL","OpenCL"],["."])
-const libopencl = Libdl.find_library(["OpenCL64","OpenCL"],["C:\\Program Files\\NVIDIA Corporation\\OpenCL\\"])
+const libopencl = Libdl.find_library(["OpenCL64","OpenCL"],["C:\\Program Files\\NVIDIA Corporation\\OpenCL\\","C:\\Program Files (x86)\\AMD APP SDK\\2.9-1\\bin\\x86_64"])
 if (isempty(libclblas))
 	print("clBLAS can't be found!")
 end
 include("cl_typedef.jl")
 include("clblas_typedef.jl")
 include("cl_functions.jl")
+include("clblas_functions.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
 
@@ -75,7 +76,7 @@ function main()
 
 	A1 = vec(A)
 
-println(length(A1))
+	#println(length(A1))
 
 	N=Csize_t(length(X))
 	order = clblasColumnMajor;

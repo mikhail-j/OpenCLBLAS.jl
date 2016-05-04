@@ -38,7 +38,7 @@ function clblasCcopy(N,X,offX,incX,Y,offY,incY,ncq,cq,ne,wle,e)
 		Csize_t,
 		Cint,
 		cl_uint,
-		Ref{cl_command_queue},
+		Ptr{cl_command_queue},
 		cl_uint,
 		Ptr{cl_event},
 		Ptr{cl_event}),

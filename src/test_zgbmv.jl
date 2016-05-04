@@ -48,10 +48,10 @@ function clblasZgbmv(o,t,M,N,kl,ku,alpha,A,oA,lda,X,oX,iX,beta,Y,oY,iY,ncq,cq,ne
 		Csize_t,
 		cl_int,
 		cl_uint,
-		Ref{cl_command_queue},
+		Ptr{cl_command_queue},
 		cl_uint,
 		Ptr{cl_event},
-		Ref{cl_event}),
+		Ptr{cl_event}),
 		o,t,M,N,kl,ku,alpha,A,oA,lda,X,oX,iX,beta,Y,oY,iY,ncq,cq,ne,wle,e)
 end
 

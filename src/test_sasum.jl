@@ -38,10 +38,10 @@ function clblasSasum(N,as,offA,X,offX,incX,sb,ncq,cq,ne,wle,e)
 		Cint,
 		cl_mem,#scratch buffer
 		cl_uint,
-		Ref{cl_command_queue},
+		Ptr{cl_command_queue},
 		cl_uint,
 		Ptr{cl_event},
-		Ref{cl_event}),
+		Ptr{cl_event}),
 		N,as,offA,X,offX,incX,sb,ncq,cq,ne,wle,e)
 end
 

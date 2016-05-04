@@ -41,7 +41,7 @@ function clblasCdotc(N,DP,offDP,X,offX,incX,Y,offY,incY,sb,ncq,cq,ne,wle,e)
 		Cint,
 		cl_mem,#scratch buff
 		cl_uint,
-		Ref{cl_command_queue},
+		Ptr{cl_command_queue},
 		cl_uint,
 		Ptr{cl_event},
 		Ptr{cl_event}),
