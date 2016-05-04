@@ -48,7 +48,7 @@ function clblasSgemm(o,tA,tB,M,N,K,alpha,A,offA,lda,B,offB,ldb,beta,C,offC,ldc,n
 		Csize_t,
 		Csize_t,
 		cl_uint,
-		Ref{cl_command_queue},
+		Ptr{cl_command_queue},
 		cl_uint,
 		#Ref{cl_event},
 		#AMD's OpenCL driver (Windows 7 x64) throws invalid event if argument type is Ref{cl_event}
