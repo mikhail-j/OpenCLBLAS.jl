@@ -1,5 +1,5 @@
 #=**
-* Ported from OpenCLBLAS zTRSM example (example_strsm.c)
+* Ported from OpenCLBLAS zTRMM example (example_strmm.c)
 * Qijia (Michael) Jin
 * @version 0.0.1
 *
@@ -31,8 +31,8 @@ include("custom_transpose.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
 
-function clblasZtrsm(o,side,ul,tA,diag,M,N,alpha,A,offA,lda,B,offB,ldb,ncq,cq,ne,wle,e)
-	return ccall((:clblasZtrsm, libclblas), cl_int, (clblasOrder,
+function clblasZtrmm(o,side,ul,tA,diag,M,N,alpha,A,offA,lda,B,offB,ldb,ncq,cq,ne,wle,e)
+	return ccall((:clblasZtrmm, libclblas), cl_int, (clblasOrder,
 		clblasSide,
 		clblasUplo,
 		clblasTranspose,
@@ -129,7 +129,7 @@ function main()
 =====#
 	event[1] = C_NULL
 
-	statusCheck(clblasZtrsm(order, side, uploA, transA, diagA, M, N,
+	statusCheck(clblasZtrmm(order, side, uploA, transA, diagA, M, N,
 							alpha, bufA, offA, lda, bufB, offB, ldb, 1, queue, 0,
 							C_NULL, event))
 

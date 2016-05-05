@@ -1,5 +1,5 @@
 #=**
-* Ported from OpenCLBLAS zTRSM example (example_strsm.c)
+* Ported from OpenCLBLAS cTRMM example (example_strmm.c)
 * Qijia (Michael) Jin
 * @version 0.0.1
 *
@@ -31,15 +31,15 @@ include("custom_transpose.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
 
-function clblasZtrsm(o,side,ul,tA,diag,M,N,alpha,A,offA,lda,B,offB,ldb,ncq,cq,ne,wle,e)
-	return ccall((:clblasZtrsm, libclblas), cl_int, (clblasOrder,
+function clblasCtrmm(o,side,ul,tA,diag,M,N,alpha,A,offA,lda,B,offB,ldb,ncq,cq,ne,wle,e)
+	return ccall((:clblasCtrmm, libclblas), cl_int, (clblasOrder,
 		clblasSide,
 		clblasUplo,
 		clblasTranspose,
 		clblasDiag,
 		Csize_t,
 		Csize_t,
-		Ptr{clblasDoubleComplex},#alpha#treating this as a pointer fixed a segmentation fault
+		clblasFloatComplex,#alpha
 		cl_mem,#A
 		Csize_t,
 		Csize_t,
@@ -71,8 +71,8 @@ function main()
 	queue[1] = clCreateCommandQueue(ctx, devs[1], cl_command_queue_properties(0), err)
 	statusCheck(err[1])
 	################################	create arrays
-	A =	convert(Array{clblasDoubleComplex,2}, [hcat(11, 12, 13, 14);hcat(0, 22, 23, 24);hcat(0,  0, 33, 34);hcat(0,  0,  0, 44)])
-	B = convert(Array{clblasDoubleComplex,2}, [hcat(11, 12, 13, 14, 15);hcat(21, 22, 23, 24, 25);hcat(31, 32, 33, 34, 35);hcat(41, 42, 43, 44, 45)])
+	A =	convert(Array{clblasFloatComplex,2}, [hcat(11, 12, 13, 14);hcat(0, 22, 23, 24);hcat(0,  0, 33, 34);hcat(0,  0,  0, 44)])
+	B = convert(Array{clblasFloatComplex,2}, [hcat(11, 12, 13, 14, 15);hcat(21, 22, 23, 24, 25);hcat(31, 32, 33, 34, 35);hcat(41, 42, 43, 44, 45)])
 
 	M = Csize_t(size(B,1))
 	N = Csize_t(size(B,2))
@@ -81,8 +81,9 @@ function main()
 	
 	order = clblasRowMajor		##julia uses column major
 	side = clblasLeft
-	alpha = Array(clblasDoubleComplex, 1)
-	alpha[1] = convert(clblasDoubleComplex, 10)
+	#alpha = Array(clblasFloatComplex, 1)
+	#alpha[1] = convert(clblasFloatComplex, 10)
+	alpha = convert(clblasFloatComplex, 10)
 	#println(string("alpha: ",alpha))
 	transA = clblasNoTrans;
 	uploA = clblasUpper;
@@ -94,21 +95,21 @@ function main()
 	statusCheck(clblasSetup())
 	statusCheck(clFlush(queue[1]))
 	err = Array(cl_int, 1)
-	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * M * sizeof(clblasDoubleComplex), C_NULL, err)
+	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * M * sizeof(clblasFloatComplex), C_NULL, err)
 	statusCheck(err[1])
 	err = Array(cl_int, 1)
-	bufB = clCreateBuffer(ctx, CL_MEM_READ_WRITE, M * N * sizeof(clblasDoubleComplex), C_NULL, err)
+	bufB = clCreateBuffer(ctx, CL_MEM_READ_WRITE, M * N * sizeof(clblasFloatComplex), C_NULL, err)
 	statusCheck(err[1])
 	statusCheck(clFlush(queue[1]))
 	
 	event = Array(cl_event, 1)
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * M * sizeof(clblasDoubleComplex), transposeNC(A), cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * M * sizeof(clblasFloatComplex), transposeNC(A), cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasDoubleComplex), transposeNC(B), cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasFloatComplex), transposeNC(B), cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
@@ -129,7 +130,7 @@ function main()
 =====#
 	event[1] = C_NULL
 
-	statusCheck(clblasZtrsm(order, side, uploA, transA, diagA, M, N,
+	statusCheck(clblasCtrmm(order, side, uploA, transA, diagA, M, N,
 							alpha, bufA, offA, lda, bufB, offB, ldb, 1, queue, 0,
 							C_NULL, event))
 
@@ -137,9 +138,9 @@ function main()
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
-	B2=Array(clblasDoubleComplex,length(B))
+	B2=Array(clblasFloatComplex,length(B))
 	event[1] = C_NULL
-	statusCheck(clEnqueueReadBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasDoubleComplex), B2, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueReadBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasFloatComplex), B2, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 

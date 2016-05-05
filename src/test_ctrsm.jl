@@ -27,6 +27,7 @@ include("cl_typedef.jl")
 include("clblas_typedef.jl")
 include("cl_functions.jl")
 include("clblas_functions.jl")
+include("custom_transpose.jl")
 #ccall((:function, “library”), return_type, (argtype,),arg)
 
 
@@ -104,11 +105,11 @@ function main()
 	event = Array(cl_event, 1)
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * M * sizeof(clblasFloatComplex), flatten(A), cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), M * M * sizeof(clblasFloatComplex), transposeNC(A), cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasFloatComplex), flatten(B), cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufB, CL_TRUE, Csize_t(0), M * N * sizeof(clblasFloatComplex), transposeNC(B), cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 
@@ -164,7 +165,7 @@ function main()
 	ctx = C_NULL
 	devs[1] = C_NULL
 	Base.gc()		##not sure if julia has been garbage collecting, now is a good time though
-	return reshape(B2, Int(N), Int(M))'
+	return transposeNC(reshape(B2, Int(N), Int(M)))
 end
 
 if (!isempty(libclblas) && !isempty(libopencl))

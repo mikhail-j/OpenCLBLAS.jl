@@ -191,23 +191,6 @@ end
 function clFinish(cq)
 	return ccall((:clFinish, libopencl), cl_int,(cl_command_queue,), cq)
 end
-function flatten(matrix)
-	#matrix' gives the conjugate transpose, which we don't want
-	if matrix == []
-		return []
-	else
-		local tmp = vec(matrix[1,:])
-		if size(matrix,1) > 1
-			for i in 2:size(matrix,1)
-				tmp = hcat(tmp,vec(matrix[i,:]))
-			end
-		end
-		return tmp
-	end
-end
-function unflatten(matrix, r, c)
-	return reshape(matrix, c, r)'
-end
 function clGetDeviceVendor(dev)
 	local len = Array(Csize_t, 1)
 	statusCheck(clGetDeviceInfo(dev, CL_DEVICE_VENDOR, 0, C_NULL, len))
