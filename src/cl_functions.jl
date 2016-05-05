@@ -181,6 +181,10 @@ function clGetMemObjectInfo(mo, name, input_size, param, return_size)
 	return ccall((:clGetMemObjectInfo, libopencl), cl_int, (cl_mem,cl_mem_info,Csize_t, Ptr{Void}, Csize_t),
 		mo, name, input_size, param, return_size)
 end
+function clGetEventInfo(eo, name, input_size, param, return_size)
+	return ccall((:clGetEventInfo, libopencl), cl_int, (cl_event,cl_event_info,Csize_t, Ptr{Void}, Csize_t),
+		eo, name, input_size, param, return_size)
+end
 function clFlush(cq)
 	return ccall((:clFlush, libopencl), cl_int,(cl_command_queue,), cq)
 end
@@ -188,7 +192,18 @@ function clFinish(cq)
 	return ccall((:clFinish, libopencl), cl_int,(cl_command_queue,), cq)
 end
 function flatten(matrix)
-	return vec(matrix')
+	#matrix' gives the conjugate transpose, which we don't want
+	if matrix == []
+		return []
+	else
+		local tmp = vec(matrix[1,:])
+		if size(matrix,1) > 1
+			for i in 2:size(matrix,1)
+				tmp = hcat(tmp,vec(matrix[i,:]))
+			end
+		end
+		return tmp
+	end
 end
 function unflatten(matrix, r, c)
 	return reshape(matrix, c, r)'
