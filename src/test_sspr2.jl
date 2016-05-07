@@ -92,7 +92,7 @@ function main()
 	statusCheck(clblasSetup())
 	statusCheck(clFlush(queue[1]))
 	err = Array(cl_int, 1)
-	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, N * N * sizeof(cl_float), C_NULL, err)
+	bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, length(A) * sizeof(cl_float), C_NULL, err)
 	statusCheck(err[1])
 	err = Array(cl_int, 1)
 	bufX = clCreateBuffer(ctx, CL_MEM_READ_ONLY, N * sizeof(cl_float), C_NULL, err)
@@ -105,7 +105,7 @@ function main()
 	event = Array(cl_event, 1)
 
 	event[1] = C_NULL
-	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), N * N * sizeof(cl_float), A, cl_uint(0), C_NULL, event))
+	statusCheck(clEnqueueWriteBuffer(queue[1], bufA, CL_TRUE, Csize_t(0), length(A) * sizeof(cl_float), A, cl_uint(0), C_NULL, event))
 	statusCheck(clWaitForEvents(1,event))
 	statusCheck(clReleaseEvent(event[1]))		#free the memory
 	event[1] = C_NULL
