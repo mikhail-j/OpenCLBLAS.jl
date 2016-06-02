@@ -98,8 +98,6 @@ hcat(clblasFloatComplex(41, 61), clblasFloatComplex(42, 62), clblasFloatComplex(
 	order = clblasRowMajor;		##julia uses column major
 	side = clblasLeft;
 	uplo = clblasLower;
-	incX = cl_int(1);
-	incY = cl_int(1);
 	alpha = clblasFloatComplex(10,10);
 	beta = clblasFloatComplex(20,20);
 	#Now initialize OpenCLBLAS and buffers

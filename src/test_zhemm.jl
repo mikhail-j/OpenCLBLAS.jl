@@ -98,8 +98,6 @@ hcat(clblasDoubleComplex(41, 61), clblasDoubleComplex(42, 62), clblasDoubleCompl
 	order = clblasRowMajor;		##julia uses column major
 	side = clblasLeft;
 	uplo = clblasLower;
-	incX = cl_int(1);
-	incY = cl_int(1);
 	alpha = zeros(clblasDoubleComplex, 1);
 	alpha[1] = clblasDoubleComplex(10,10);
 	beta = zeros(clblasDoubleComplex, 1);
